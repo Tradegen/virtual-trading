@@ -45,16 +45,6 @@ interface IVirtualTradingEnvironmentRegistry {
     /* ========== MUTATIVE FUNCTIONS ========== */
     
     /**
-    * @notice Updates the address of the given VTE's data feed.
-    * @dev Only the owner of the VirtualTradingEnvironmentRegistry contract can call this function.
-    * @dev Transaction will revert if the VTE is not found.
-    * @param _index Index of the virtual trading environment.
-    * @param _dataFeed Address of the VirtualTradingEnvironmentDataFeed contract.
-    */
-    function setDataFeed(uint256 _index, address _dataFeed) external;
-
-
-    /**
      * @notice Creates a virtual trading environment contract.
      * @dev Transaction will revert if _usageFee is too high.
      * @param _usageFee Fee that users pay when making a request to the VTE's data feed.
@@ -62,6 +52,15 @@ interface IVirtualTradingEnvironmentRegistry {
     function createVirtualTradingEnvironment(uint256 _usageFee) external;
     
     /* ========== RESTRICTED FUNCTIONS ========== */
+
+    /**
+    * @notice Updates the address of the given VTE's data feed.
+    * @dev Only the owner of the VirtualTradingEnvironmentRegistry contract can call this function.
+    * @dev Transaction will revert if the VTE is not found.
+    * @param _index Index of the virtual trading environment.
+    * @param _dataFeed Address of the VirtualTradingEnvironmentDataFeed contract.
+    */
+    function setDataFeed(uint256 _index, address _dataFeed) external;
 
     /**
      * @notice Updates the address of the operator.
