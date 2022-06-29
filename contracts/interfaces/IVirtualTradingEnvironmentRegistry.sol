@@ -7,6 +7,16 @@ interface IVirtualTradingEnvironmentRegistry {
     /* ========== VIEWS ========== */
 
     /**
+    * @notice Returns the maximum number of positions that a VTE can have.
+    */
+    function maximumNumberOfPositions() external view returns (uint256);
+
+    /**
+    * @notice Returns the maximum cumulative leverage factor of a VTE.
+    */
+    function maximumLeverageFactor() external view returns (uint256);
+
+    /**
     * @notice Returns the address of the given VTE's data feed.
     * @dev Returns address(0) if the VTE is not found.
     * @dev Either [_index] or [_VTE] is used for getting the data.

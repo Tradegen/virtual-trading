@@ -7,7 +7,6 @@ interface IVirtualTradingEnvironment {
     struct Position {
         bool isLong;
         uint256 leverageFactor;
-        string symbol;
     }
 
     /* ========== VIEWS ========== */
