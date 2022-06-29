@@ -1,18 +1,53 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.7.6;
+pragma solidity ^0.8.3;
 
 interface IVirtualTradingEnvironment {
-    /**
-    * @notice Returns the latest price of the given asset.
-    * @dev Calls the current data source to get the price.
-    * @param _asset Symbol of the asset.
-    * @return uint256 Latest price of the asset.
-    */
-    function getLatestPrice(string memory _asset) external view returns (uint256);
+
+    struct Position {
+        bool isLong;
+        uint256 leverageFactor;
+        string symbol;
+    }
+
+    /* ========== VIEWS ========== */
 
     /**
-    * @notice Returns the address of the oracle contract's data source.
+     * @notice Returns the address of the VTE's owner.
+     */
+    function owner() external view returns (address);
+
+    /**
+     * @notice Returns the address of the VTE's VirtualTradingEnvironmentDataFeed contract.
+     */
+    function dataFeed() external view returns (address);
+
+    /* ========== MUTATIVE FUNCTIONS ========== */
+
+    /**
+    * @notice Simulates a market order for the given asset.
+    * @dev This function can only be called by the VTE owner.
+    * @dev Transaction will revert if adding the given leverage factor exceeds the max leverage factor.
+    * @param _asset Symbol of the asset.
+    * @param _isBuy Whether the order represents a 'buy' order.
+    * @param _isLong Whether the order is going long.
+    * @param _leverageFactor Amount of leverage to use; denominated by 100.
+    *                        Ex) 2x leverage = 200; 0.25x leverage = 25.
     */
-    function dataSource() external view returns (address);
+    function placeOrder(string memory _asset, bool _isBuy, bool _isLong, uint256 _leverageFactor) external;
+
+    /**
+    * @notice Simulates a market order to close the position in the given asset.
+    * @dev This function can only be called by the VTE owner.
+    * @dev Transaction will revert if the VTE does not have a position in the given asset.
+    * @param _asset Symbol of the asset.
+    */
+    function closePosition(string memory _asset) external;
+
+    /**
+    * @notice Sets the address of the VTE's VirtualTradingEnvironmentDataFeed contract.
+    * @dev This function can only be called once by the VirtualTradingEnvironmentRegistry contract.
+    * @param _dataFeed Address of the VirtualTradingEnvironmentDataFeed contract.
+    */
+    function setDataFeed(address _dataFeed) external;
 }
