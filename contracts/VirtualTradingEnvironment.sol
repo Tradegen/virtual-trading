@@ -4,7 +4,6 @@ pragma solidity ^0.8.3;
 
 // Openzeppelin.
 import "./openzeppelin-solidity/contracts/SafeMath.sol";
-import "./openzeppelin-solidity/contracts/Ownable.sol";
 
 // Interfaces.
 import './interfaces/IOracle.sol';
@@ -14,7 +13,7 @@ import './interfaces/external/IVTEDataFeed.sol';
 // Inheritance.
 import './interfaces/IVirtualTradingEnvironment.sol';
 
-contract VirtualTradingEnvironment is IVirtualTradingEnvironment, Ownable {
+contract VirtualTradingEnvironment is IVirtualTradingEnvironment {
     using SafeMath for uint256;
 
     IOracle public immutable oracle;
@@ -29,7 +28,7 @@ contract VirtualTradingEnvironment is IVirtualTradingEnvironment, Ownable {
     // (asset symbol => position info).
     mapping (string => Position) public positions;
 
-    constructor(address _owner, address _oracle, address _registry) Ownable() {
+    constructor(address _owner, address _oracle, address _registry) {
         VTEOwner = _owner;
         oracle = IOracle(_oracle);
         registry = IVirtualTradingEnvironmentRegistry(_registry);
@@ -59,20 +58,38 @@ contract VirtualTradingEnvironment is IVirtualTradingEnvironment, Ownable {
         // Check if opening a position.
         if (position.leverageFactor == 0) {
             numberOfPositions = numberOfPositions.add(1);
+            positions[_asset].isLong = _isBuy;
+
+            // Update local variable.
+            position.isLong = _isBuy;
         }
 
         // If order is same direction as position, add to leverage factor.
         if ((position.isLong && _isBuy) || (!position.isLong && !_isBuy)) {
-            positions[_asset].leverageFactor = position.leverageFactor.add(_leverageFactor);
+            // Update local variable.
+            position.leverageFactor = position.leverageFactor.add(_leverageFactor);
+
+            positions[_asset].leverageFactor = position.leverageFactor;
+            cumulativeLeverageFactor = cumulativeLeverageFactor.add(_leverageFactor);
         }
-        // Switch directions.
+        // Reduce position or switch directions.
         else {
+            // Reduce position.
             if (position.leverageFactor >= _leverageFactor) {
-                positions[_asset].leverageFactor = position.leverageFactor.sub(_leverageFactor);
+                // Update local variable.
+                position.leverageFactor = position.leverageFactor.sub(_leverageFactor);
+
+                positions[_asset].leverageFactor = position.leverageFactor;
+                cumulativeLeverageFactor = cumulativeLeverageFactor.sub(_leverageFactor);
             }
+            // Switch directions.
             else {
                 positions[_asset].leverageFactor = _leverageFactor.sub(position.leverageFactor);
                 positions[_asset].isLong = !position.isLong;
+                cumulativeLeverageFactor = cumulativeLeverageFactor.sub(position.leverageFactor).add(_leverageFactor).sub(position.leverageFactor);
+
+                // Update local variable.
+                position.leverageFactor = _leverageFactor.sub(position.leverageFactor);
             }
         }
 
@@ -101,6 +118,9 @@ contract VirtualTradingEnvironment is IVirtualTradingEnvironment, Ownable {
         uint256 currentPrice = oracle.getLatestPrice(_asset);
         require(currentPrice > 0, "VirtualTradingEnvironment: Error getting the latest price.");
 
+        numberOfPositions = numberOfPositions.sub(1);
+        positions[_asset].leverageFactor = 0;
+        cumulativeLeverageFactor = cumulativeLeverageFactor.sub(position.leverageFactor);
         IVTEDataFeed(dataFeed).updateData(_asset, !position.isLong, currentPrice, position.leverageFactor);
 
         emit PlacedOrder(_asset, !position.isLong, currentPrice, position.leverageFactor);
@@ -120,6 +140,11 @@ contract VirtualTradingEnvironment is IVirtualTradingEnvironment, Ownable {
     }
 
     /* ========== MODIFIERS ========== */
+
+    modifier onlyOwner() {
+        require(msg.sender == VTEOwner, "VirtualTradingEnvironment: Only the owner can call this function.");
+        _;
+    }
 
     modifier onlyVTERegistry() {
         require(msg.sender == address(registry), "VirtualTradingEnvironment: Only the VirtualTradingEnvironmentRegistry contract can call this function.");
