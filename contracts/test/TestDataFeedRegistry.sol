@@ -8,5 +8,9 @@ contract TestDataFeedRegistry {
     function getCurrentPrice(string memory _asset, uint256 _timeframe) external view returns (uint256) {
         return 1e18;
     }
+
+    function registerDataFeed(address,uint256,address) external returns (address) {
+        return address(this);
+    }
 }
 

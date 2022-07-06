@@ -15,9 +15,8 @@ contract VirtualTradingEnvironmentFactory is IVirtualTradingEnvironmentFactory, 
     address public immutable oracle;
     address public virtualTradingEnvironmentRegistry;
 
-    constructor(address _oracle, address _virtualTradingEnvironmentRegistry) Ownable() {
+    constructor(address _oracle) Ownable() {
         oracle = _oracle;
-        virtualTradingEnvironmentRegistry = _virtualTradingEnvironmentRegistry;
     }
 
     /* ========== MUTATIVE FUNCTIONS ========== */

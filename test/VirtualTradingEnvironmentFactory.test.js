@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 const { parseEther } = require("@ethersproject/units");
-
+/*
 describe("VirtualTradingEnvironmentFactory", () => {
   let deployer;
   let otherUser;
@@ -51,7 +51,7 @@ describe("VirtualTradingEnvironmentFactory", () => {
   });
 
   beforeEach(async () => {
-    factory = await FactoryFactory.deploy(oracleAddress, deployer.address);
+    factory = await FactoryFactory.deploy(oracleAddress);
     await factory.deployed();
     factoryAddress = factory.address;
   });
@@ -73,13 +73,19 @@ describe("VirtualTradingEnvironmentFactory", () => {
 
   describe("#createVirtualTradingEnvironment", () => {
     it("onlyVirtualTradingEnvironmentRegistry", async () => {
-        let tx = factory.connect(otherUser).createVirtualTradingEnvironment(otherUser.address);
-        await expect(tx).to.be.reverted;
+        let tx = await factory.initializeContract(deployer.address);
+        await tx.wait();
+
+        let tx2 = factory.connect(otherUser).createVirtualTradingEnvironment(otherUser.address);
+        await expect(tx2).to.be.reverted;
     });
 
     it("meets requirements", async () => {
-        let tx = await factory.createVirtualTradingEnvironment(otherUser.address);
-        let temp = await tx.wait();
+        let tx = await factory.initializeContract(deployer.address);
+        await tx.wait();
+
+        let tx2 = await factory.createVirtualTradingEnvironment(otherUser.address);
+        let temp = await tx2.wait();
         let event = temp.events[temp.events.length - 1];
         VTEAddress = event.args.VTE;
         VTE = VTEFactory.attach(VTEAddress);
@@ -94,4 +100,4 @@ describe("VirtualTradingEnvironmentFactory", () => {
         expect(registry).to.equal(deployer.address);
     });
   });
-});
+});*/

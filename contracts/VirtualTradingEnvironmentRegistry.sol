@@ -51,7 +51,7 @@ contract VirtualTradingEnvironmentRegistry is IVirtualTradingEnvironmentRegistry
         maximumNumberOfPositions = 8;
         maximumLeverageFactor = 1000;
 
-        MAX_VTE_PER_USER = 3;
+        MAX_VTE_PER_USER = 2;
         CREATION_FEE = 1e20;
         MAX_USAGE_FEE = 1e21;
     }
@@ -142,7 +142,7 @@ contract VirtualTradingEnvironmentRegistry is IVirtualTradingEnvironmentRegistry
     * @param _index Index of the virtual trading environment.
     * @param _dataFeed Address of the VirtualTradingEnvironmentDataFeed contract.
     */
-    function setDataFeed(uint256 _index, address _dataFeed) external override {
+    function setDataFeed(uint256 _index, address _dataFeed) external override onlyOwner {
         require(_index > 0 && _index <= numberOfVTEs, "VirtualTradingEnvironmentRegistry: Index out of bounds.");
         require(virtualTradingEnvironments[_index] == IVTEDataFeed(_dataFeed).dataProvider(), "VirtualTradingEnvironmentRegistry: VTE is not the data provider for this data feed.");
 
@@ -187,11 +187,11 @@ contract VirtualTradingEnvironmentRegistry is IVirtualTradingEnvironmentRegistry
     }
 
     /**
-     * @notice Updates the mint fee.
+     * @notice Updates the creation fee.
      * @dev This function can only be called by the operator.
-     * @param _newFee The new mint fee.
+     * @param _newFee The new creation fee.
      */
-    function updateMintFee(uint256 _newFee) external onlyOperator {
+    function updateCreationFee(uint256 _newFee) external onlyOperator {
         require(_newFee >= 0, "VirtualTradingEnvironmentRegistry: New fee must be positive.");
 
         CREATION_FEE = _newFee;
