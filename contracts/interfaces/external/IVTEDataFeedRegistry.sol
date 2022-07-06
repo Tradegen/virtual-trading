@@ -34,26 +34,13 @@ interface IVTEDataFeedRegistry {
     function lastUpdated(address _VTE) external view returns (uint256);
 
     /**
-    * @notice Returns the status of the given VTE's data feed.
-    * @param _VTE Address of the VTE.
-    */
-    function getDataFeedStatus(address _VTE) external view returns (uint256);
-
-    /**
-    * @notice Given the address of a VTE, returns whether the VTE has a data feed.
-    * @param _VTE Address of the virtual trading environment.
-    * @return bool Whether the given VTE has a data feed.
-    */
-    function hasDataFeed(address _VTE) external view returns (bool);
-
-    /**
      * @notice Returns the order info for the given VTE at the given index.
      * @dev Returns 0 for each value if the VTE does not have a data feed or the given index is out of bounds.
      * @param _VTE Address of the virtual trading environment.
      * @param _index Index of the order.
-     * @return (string, bool, bool, uint256, uint256, uint256) Symbol of the asset, whether the order was a 'buy', whether the order is long or short, timestamp, asset's price, and leverage factor.
+     * @return (string, bool, bool, uint256, uint256, uint256) Symbol of the asset, whether the order was a 'buy', timestamp, asset's price, and leverage factor.
      */
-    function getOrderInfo(address _VTE, uint256 _index) external view returns (string memory, bool, bool, uint256, uint256, uint256);
+    function getOrderInfo(address _VTE, uint256 _index) external view returns (string memory, bool, uint256, uint256, uint256);
 
     /**
      * @notice Returns the current token price of the given VTE.
@@ -72,6 +59,7 @@ interface IVTEDataFeedRegistry {
     * @param _VTE Address of the virtual trading environment.
     * @param _usageFee Number of fee tokens to charge whenever a contract queries the data feed.
     * @param _dedicatedDataProvider Address of the data provider responsible for this data feed.
+    * @return address Address of the created data feed.
     */
-    function registerDataFeed(address _VTE, uint256 _usageFee, address _dedicatedDataProvider) external;
+    function registerDataFeed(address _VTE, uint256 _usageFee, address _dedicatedDataProvider) external returns (address);
 }

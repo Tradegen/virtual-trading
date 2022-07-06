@@ -26,8 +26,6 @@ contract VirtualTradingEnvironmentRegistry is IVirtualTradingEnvironmentRegistry
 
     IVirtualTradingEnvironmentFactory public immutable factory;
     IVTEDataFeedRegistry public immutable dataFeedRegistry;
-    address public immutable feeToken;
-    address public immutable xTGEN;
 
     address public operator;
     address public registrar;
@@ -44,11 +42,9 @@ contract VirtualTradingEnvironmentRegistry is IVirtualTradingEnvironmentRegistry
     // (user address => number of VTEs the user owns).
     mapping (address => uint256) public VTEsPerUser;
 
-    constructor(address _factory, address _registry, address _feeToken, address _xTGEN) {
+    constructor(address _factory, address _registry) {
         factory = IVirtualTradingEnvironmentFactory(_factory);
-        registry = IVTEDataFeedRegistry(_registry);
-        feeToken = IERC20(_feeToken);
-        xTGEN = _xTGEN;
+        dataFeedRegistry = IVTEDataFeedRegistry(_registry);
 
         operator = msg.sender;
         registrar = msg.sender;
@@ -79,7 +75,7 @@ contract VirtualTradingEnvironmentRegistry is IVirtualTradingEnvironmentRegistry
         }
 
         if (_VTE == address(0)) {
-            return IVirtualTradingEnvironment(VTEAddresses[_index]).dataFeed();
+            return IVirtualTradingEnvironment(virtualTradingEnvironments[_index]).dataFeed();
         }
 
         return address(0);
@@ -98,11 +94,11 @@ contract VirtualTradingEnvironmentRegistry is IVirtualTradingEnvironmentRegistry
     */
     function getOwner(uint256 _index, address _VTE) external view override returns (address) {
         if (_index == 0) {
-            return IVirtualTradingEnvironment(_VTE).owner();
+            return IVirtualTradingEnvironment(_VTE).VTEOwner();
         }
 
         if (_VTE == address(0)) {
-            return IVirtualTradingEnvironment(VTEAddresses[_index]).owner();
+            return IVirtualTradingEnvironment(virtualTradingEnvironments[_index]).VTEOwner();
         }
 
         return address(0);
@@ -125,6 +121,10 @@ contract VirtualTradingEnvironmentRegistry is IVirtualTradingEnvironmentRegistry
         // Create the contract and get address.
         address VTE = factory.createVirtualTradingEnvironment(msg.sender);
 
+        // Create data feed.
+        address dataFeed = dataFeedRegistry.registerDataFeed(VTE, _usageFee, VTE);
+        IVirtualTradingEnvironment(VTE).setDataFeed(dataFeed);
+
         numberOfVTEs = index;
         VTEsPerUser[msg.sender] = VTEsPerUser[msg.sender].add(1);
         virtualTradingEnvironments[index] = VTE;
@@ -144,9 +144,9 @@ contract VirtualTradingEnvironmentRegistry is IVirtualTradingEnvironmentRegistry
     */
     function setDataFeed(uint256 _index, address _dataFeed) external override {
         require(_index > 0 && _index <= numberOfVTEs, "VirtualTradingEnvironmentRegistry: Index out of bounds.");
-        require(VTEAddresses[_index] == IVTEDataFeed(_dataFeed).dataProvider(), "VirtualTradingEnvironmentRegistry: VTE is not the data provider for this data feed.");
+        require(virtualTradingEnvironments[_index] == IVTEDataFeed(_dataFeed).dataProvider(), "VirtualTradingEnvironmentRegistry: VTE is not the data provider for this data feed.");
 
-        IVirtualTradingEnvironment(VTEAddresses[_index]).setDataFeed(_dataFeed);
+        IVirtualTradingEnvironment(virtualTradingEnvironments[_index]).setDataFeed(_dataFeed);
 
         emit SetDataFeed(_index, _dataFeed);
     }

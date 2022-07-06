@@ -14,8 +14,8 @@ import './interfaces/IDataSource.sol';
 contract TradegenCandlestickDataSource is IDataSource, Ownable {
     ICandlestickDataFeedRegistry public registry;
 
-    constructor(address _dataSource) Ownable() {
-        dataSource = _dataSource;
+    constructor(address _registry) Ownable() {
+        registry = ICandlestickDataFeedRegistry(_registry);
     }
 
     /* ========== VIEWS ========== */
@@ -39,9 +39,9 @@ contract TradegenCandlestickDataSource is IDataSource, Ownable {
     * @param _registry Address of the CandlestickDataFeedRegistry contract.
     */
     function setRegistry(address _registry) external onlyOwner {
-        registry = _registry;
+        registry = ICandlestickDataFeedRegistry(_registry);
 
-        emit SetDataSource(_registry);
+        emit SetRegistry(_registry);
     }
 
     /* ========== EVENTS ========== */

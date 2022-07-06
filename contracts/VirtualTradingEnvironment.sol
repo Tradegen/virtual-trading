@@ -4,6 +4,7 @@ pragma solidity ^0.8.3;
 
 // Openzeppelin.
 import "./openzeppelin-solidity/contracts/SafeMath.sol";
+import "./openzeppelin-solidity/contracts/Ownable.sol";
 
 // Interfaces.
 import './interfaces/IOracle.sol';
@@ -13,12 +14,12 @@ import './interfaces/external/IVTEDataFeed.sol';
 // Inheritance.
 import './interfaces/IVirtualTradingEnvironment.sol';
 
-contract Oracle is IOracle, Ownable {
+contract VirtualTradingEnvironment is IVirtualTradingEnvironment, Ownable {
     using SafeMath for uint256;
 
     IOracle public immutable oracle;
     IVirtualTradingEnvironmentRegistry public immutable registry;
-    address public immutable override owner;
+    address public immutable override VTEOwner;
     address public override dataFeed;
 
     // Total leverage factor across all positions.
@@ -28,8 +29,8 @@ contract Oracle is IOracle, Ownable {
     // (asset symbol => position info).
     mapping (string => Position) public positions;
 
-    constructor(address _owner, address _oracle, address _registry) {
-        owner = _owner;
+    constructor(address _owner, address _oracle, address _registry) Ownable() {
+        VTEOwner = _owner;
         oracle = IOracle(_oracle);
         registry = IVirtualTradingEnvironmentRegistry(_registry);
     }
@@ -42,7 +43,6 @@ contract Oracle is IOracle, Ownable {
     * @dev Transaction will revert if adding the given leverage factor exceeds the max leverage factor.
     * @param _asset Symbol of the asset.
     * @param _isBuy Whether the order represents a 'buy' order.
-    * @param _isLong Whether the order is going long.
     * @param _leverageFactor Amount of leverage to use; denominated by 100.
     *                        Ex) 2x leverage = 200; 0.25x leverage = 25.
     */
@@ -121,18 +121,13 @@ contract Oracle is IOracle, Ownable {
 
     /* ========== MODIFIERS ========== */
 
-    modifier onlyOwner() {
-        require(msg.sender == owner, "VirtualTradingEnvironment: Only the VTE owner can call this function.");
-        _;
-    }
-
     modifier onlyVTERegistry() {
-        require(msg.sender == registry, "VirtualTradingEnvironment: Only the VirtualTradingEnvironmentRegistry contract can call this function.");
+        require(msg.sender == address(registry), "VirtualTradingEnvironment: Only the VirtualTradingEnvironmentRegistry contract can call this function.");
         _;
     }
 
     /* ========== EVENTS ========== */
 
     event SetDataFeed(address newDataFeed);
-    event PlacedOrder(string asset, bool isBuy, bool isLong, uint256 assetPrice, uint256 leverageFactor);
+    event PlacedOrder(string asset, bool isBuy, uint256 assetPrice, uint256 leverageFactor);
 }
