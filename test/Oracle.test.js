@@ -1,7 +1,7 @@
 const { expect } = require("chai");
 const { parseEther } = require("@ethersproject/units");
-/*
-describe("TradegenCandlestickDataSource", () => {
+
+describe("Oracle", () => {
   let deployer;
   let otherUser;
 
@@ -13,6 +13,10 @@ describe("TradegenCandlestickDataSource", () => {
   let dataSourceAddress;
   let DataSourceFactory;
 
+  let oracle;
+  let oracleAddress;
+  let OracleFactory;
+
   before(async () => {
     const signers = await ethers.getSigners();
 
@@ -21,37 +25,42 @@ describe("TradegenCandlestickDataSource", () => {
 
     DataFeedRegistryFactory = await ethers.getContractFactory('TestDataFeedRegistry');
     DataSourceFactory = await ethers.getContractFactory('TradegenCandlestickDataSource');
+    OracleFactory = await ethers.getContractFactory('Oracle');
 
     dataFeedRegistry = await DataFeedRegistryFactory.deploy();
     await dataFeedRegistry.deployed();
     dataFeedRegistryAddress = dataFeedRegistry.address;
-  });
 
-  beforeEach(async () => {
     dataSource = await DataSourceFactory.deploy(dataFeedRegistryAddress);
     await dataSource.deployed();
     dataSourceAddress = dataSource.address;
   });
 
-  describe("#setRegistry", () => {
+  beforeEach(async () => {
+    oracle = await OracleFactory.deploy(dataSourceAddress);
+    await oracle.deployed();
+    oracleAddress = oracle.address;
+  });
+
+  describe("#setDataSource", () => {
     it("onlyOwner", async () => {
-        let tx = dataSource.connect(otherUser).setRegistry(otherUser.address);
+        let tx = oracle.connect(otherUser).setDataSource(otherUser.address);
         await expect(tx).to.be.reverted;
     });
 
     it("meets requirements", async () => {
-      let tx = await dataSource.setRegistry(otherUser.address);
+      let tx = await oracle.setDataSource(otherUser.address);
       await tx.wait();
 
-      let registry = await dataSource.registry();
-      expect(registry).to.equal(otherUser.address);
+      let newDataSource = await oracle.dataSource();
+      expect(newDataSource).to.equal(otherUser.address);
     });
   });
 
   describe("#getLatestPrice", () => {
     it("meets requirements", async () => {
-      let price = await dataSource.getLatestPrice("BTC");
+      let price = await oracle.getLatestPrice("BTC");
       expect(price).to.equal(parseEther("1"));
     });
   });
-});*/
+});
