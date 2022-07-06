@@ -48,8 +48,8 @@ contract VirtualTradingEnvironmentRegistry is IVirtualTradingEnvironmentRegistry
 
         operator = msg.sender;
         registrar = msg.sender;
-        maximumNumberOfPositions = 8;
-        maximumLeverageFactor = 1000;
+        maximumNumberOfPositions = 5;
+        maximumLeverageFactor = 1e19;
 
         MAX_VTE_PER_USER = 2;
         CREATION_FEE = 1e20;
@@ -212,6 +212,32 @@ contract VirtualTradingEnvironmentRegistry is IVirtualTradingEnvironmentRegistry
         emit UpdatedMaxUsageFee(_newFee);
     }
 
+    /**
+     * @notice Increases the maximum number of positions that a VTE can have.
+     * @dev This function can only be called by the operator.
+     * @param _newLimit The new maximum number of positions
+     */
+    function increaseMaximumNumberOfPositions(uint256 _newLimit) external onlyOperator {
+        require(_newLimit > maximumNumberOfPositions, "VirtualTradingEnvironmentRegistry: New limit must be higher.");
+
+        maximumNumberOfPositions = _newLimit;
+
+        emit IncreasedMaximumNumberOfPositions(_newLimit);
+    }
+
+    /**
+     * @notice Increases the maximum leverage factor that a VTE can have.
+     * @dev This function can only be called by the operator.
+     * @param _newLimit The new maximum leverage factor.
+     */
+    function increaseMaximumLeverageFactor(uint256 _newLimit) external onlyOperator {
+        require(_newLimit > maximumLeverageFactor, "VirtualTradingEnvironmentRegistry: New limit must be higher.");
+
+        maximumLeverageFactor = _newLimit;
+
+        emit IncreasedMaximumLeverageFactor(_newLimit);
+    }
+
     /* ========== MODIFIERS ========== */
 
     modifier onlyRegistrar() {
@@ -233,4 +259,6 @@ contract VirtualTradingEnvironmentRegistry is IVirtualTradingEnvironmentRegistry
     event UpdatedCreationFee(uint256 newFee);
     event UpdatedMaxUsageFee(uint256 newFee);
     event CreatedVTE(uint256 index, address contractAddress, address owner);
+    event IncreasedMaximumNumberOfPositions(uint256 newLimit);
+    event IncreasedMaximumLeverageFactor(uint256 newLimit);
 }

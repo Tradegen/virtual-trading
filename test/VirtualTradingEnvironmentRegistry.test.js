@@ -208,4 +208,44 @@ describe("VirtualTradingEnvironmentRegistry", () => {
         expect(fee).to.equal(parseEther("888"));
     });
   });
+
+  describe("#increaseMaximumNumberOfPositions", () => {
+    it("onlyOperator", async () => {
+        let tx = registry.connect(otherUser).increaseMaximumNumberOfPositions(88);
+        await expect(tx).to.be.reverted;
+    });
+
+    it("new limit must be higher", async () => {
+        let tx = registry.increaseMaximumNumberOfPositions(1);
+        await expect(tx).to.be.reverted;
+    });
+
+    it("meets requirements", async () => {
+        let tx = await registry.increaseMaximumNumberOfPositions(88);
+        await tx.wait();
+
+        let limit = await registry.maximumNumberOfPositions();
+        expect(limit).to.equal(88);
+    });
+  });
+
+  describe("#increaseMaximumLeverageFactor", () => {
+    it("onlyOperator", async () => {
+        let tx = registry.connect(otherUser).increaseMaximumLeverageFactor(parseEther("88"));
+        await expect(tx).to.be.reverted;
+    });
+
+    it("new limit must be higher", async () => {
+        let tx = registry.increaseMaximumLeverageFactor(parseEther("1"));
+        await expect(tx).to.be.reverted;
+    });
+
+    it("meets requirements", async () => {
+        let tx = await registry.increaseMaximumLeverageFactor(parseEther("88"));
+        await tx.wait();
+
+        let limit = await registry.maximumLeverageFactor();
+        expect(limit).to.equal(parseEther("88"));
+    });
+  });
 });
