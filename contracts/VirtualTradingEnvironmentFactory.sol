@@ -31,7 +31,7 @@ contract VirtualTradingEnvironmentFactory is IVirtualTradingEnvironmentFactory, 
     function createVirtualTradingEnvironment(address _owner) external override onlyVirtualTradingEnvironmentRegistry returns (address) {
         address VTE = address(new VirtualTradingEnvironment(_owner, oracle, virtualTradingEnvironmentRegistry));
 
-        emit CreatedVirtualTradingEnvironment(_owner);
+        emit CreatedVirtualTradingEnvironment(_owner, VTE);
 
         return VTE;
     }
@@ -61,6 +61,6 @@ contract VirtualTradingEnvironmentFactory is IVirtualTradingEnvironmentFactory, 
 
     /* ========== EVENTS ========== */
 
-    event CreatedVirtualTradingEnvironment(address owner);
+    event CreatedVirtualTradingEnvironment(address owner, address VTE);
     event InitializedContract(address registryAddress);
 }
