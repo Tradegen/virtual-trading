@@ -15,8 +15,14 @@ interface IVTEDataFeed {
         bool isLong;
         uint256 entryPrice;
         uint256 leverageFactor;
-        uint256 portfolioValue;
         string asset;
+    }
+
+    struct Params {
+        uint256 positiveCurrentValue;
+        uint256 negativeCurrentValue;
+        uint256 valueRemoved;
+        bool isPositive;
     }
 
     /**

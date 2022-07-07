@@ -1,7 +1,7 @@
 const { expect } = require("chai");
 const { parseEther } = require("@ethersproject/units");
-
-describe("VirtualTradingEnvironmentRegistry", () => {
+/*
+describe("VirtualTradingEnvironment", () => {
   let deployer;
   let otherUser;
 
@@ -361,4 +361,4 @@ describe("VirtualTradingEnvironmentRegistry", () => {
         expect(position[1]).to.equal(0);
     });
   });
-});
+});*/
