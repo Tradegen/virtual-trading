@@ -21,7 +21,6 @@ contract VirtualTradingEnvironmentRegistry is IVirtualTradingEnvironmentRegistry
     using SafeERC20 for IERC20;
 
     uint256 public MAX_VTE_PER_USER;
-    uint256 public CREATION_FEE;
     uint256 public MAX_USAGE_FEE;
 
     IVirtualTradingEnvironmentFactory public immutable factory;
@@ -52,7 +51,6 @@ contract VirtualTradingEnvironmentRegistry is IVirtualTradingEnvironmentRegistry
         maximumLeverageFactor = 1e19;
 
         MAX_VTE_PER_USER = 2;
-        CREATION_FEE = 1e20;
         MAX_USAGE_FEE = 1e21;
     }
 
@@ -184,19 +182,6 @@ contract VirtualTradingEnvironmentRegistry is IVirtualTradingEnvironmentRegistry
         MAX_VTE_PER_USER = _newLimit;
 
         emit IncreasedMaxVTEsPerUser(_newLimit);
-    }
-
-    /**
-     * @notice Updates the creation fee.
-     * @dev This function can only be called by the operator.
-     * @param _newFee The new creation fee.
-     */
-    function updateCreationFee(uint256 _newFee) external onlyOperator {
-        require(_newFee >= 0, "VirtualTradingEnvironmentRegistry: New fee must be positive.");
-
-        CREATION_FEE = _newFee;
-
-        emit UpdatedCreationFee(_newFee);
     }
 
     /**

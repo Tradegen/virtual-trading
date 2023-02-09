@@ -179,21 +179,6 @@ describe("VirtualTradingEnvironmentRegistry", () => {
     });
   });
 
-  describe("#updateCreationFee", () => {
-    it("onlyOperator", async () => {
-        let tx = registry.connect(otherUser).updateCreationFee(parseEther("1000"));
-        await expect(tx).to.be.reverted;
-    });
-
-    it("meets requirements", async () => {
-        let tx = await registry.updateCreationFee(parseEther("888"));
-        await tx.wait();
-
-        let fee = await registry.CREATION_FEE();
-        expect(fee).to.equal(parseEther("888"));
-    });
-  });
-
   describe("#updateMaxUsageFee", () => {
     it("onlyOperator", async () => {
         let tx = registry.connect(otherUser).updateMaxUsageFee(parseEther("1000"));
