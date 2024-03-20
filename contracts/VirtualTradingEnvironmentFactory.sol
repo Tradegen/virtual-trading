@@ -25,12 +25,13 @@ contract VirtualTradingEnvironmentFactory is IVirtualTradingEnvironmentFactory, 
     * @notice Deploys a VirtualTradingEnvironment contract and returns the contract's address.
     * @dev This function can only be called by the VirtualTradingEnvironmentRegistry contract.
     * @param _owner Address of the user that can trade in the VTE.
+    * @param _name Name of the VTE.
     * @return address Address of the deployed VTE contract.
     */
-    function createVirtualTradingEnvironment(address _owner) external override onlyVirtualTradingEnvironmentRegistry returns (address) {
-        address VTE = address(new VirtualTradingEnvironment(_owner, oracle, virtualTradingEnvironmentRegistry));
+    function createVirtualTradingEnvironment(address _owner, string memory _name) external override onlyVirtualTradingEnvironmentRegistry returns (address) {
+        address VTE = address(new VirtualTradingEnvironment(_owner, oracle, virtualTradingEnvironmentRegistry, _name));
 
-        emit CreatedVirtualTradingEnvironment(_owner, VTE);
+        emit CreatedVirtualTradingEnvironment(_owner, VTE, _name);
 
         return VTE;
     }
@@ -60,6 +61,6 @@ contract VirtualTradingEnvironmentFactory is IVirtualTradingEnvironmentFactory, 
 
     /* ========== EVENTS ========== */
 
-    event CreatedVirtualTradingEnvironment(address owner, address VTE);
+    event CreatedVirtualTradingEnvironment(address owner, address VTE, string name);
     event InitializedContract(address registryAddress);
 }

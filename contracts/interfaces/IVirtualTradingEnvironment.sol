@@ -21,6 +21,11 @@ interface IVirtualTradingEnvironment {
      */
     function dataFeed() external view returns (address);
 
+    /**
+     * @notice Returns the name of the VTE.
+     */
+    function name() external view returns (string memory);
+
     /* ========== MUTATIVE FUNCTIONS ========== */
 
     /**
@@ -48,4 +53,11 @@ interface IVirtualTradingEnvironment {
     * @param _dataFeed Address of the VirtualTradingEnvironmentDataFeed contract.
     */
     function setDataFeed(address _dataFeed) external;
+
+    /**
+    * @notice Updates the name of this VTE.
+    * @dev This function can only be called once by the VirtualTradingEnvironmentRegistry contract.
+    * @param _newName The new name for this VTE.
+    */
+    function updateName(string memory _newName) external;
 }

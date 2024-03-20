@@ -20,6 +20,7 @@ contract VirtualTradingEnvironment is IVirtualTradingEnvironment {
     IVirtualTradingEnvironmentRegistry public immutable registry;
     address public immutable override VTEOwner;
     address public override dataFeed;
+    string public override name;
 
     // Total leverage factor across all positions.
     uint256 public cumulativeLeverageFactor;
@@ -28,8 +29,9 @@ contract VirtualTradingEnvironment is IVirtualTradingEnvironment {
     // (asset symbol => position info).
     mapping (string => Position) public positions;
 
-    constructor(address _owner, address _oracle, address _registry) {
+    constructor(address _owner, address _oracle, address _registry, string memory _name) {
         VTEOwner = _owner;
+        name = _name;
         oracle = IOracle(_oracle);
         registry = IVirtualTradingEnvironmentRegistry(_registry);
     }
@@ -139,6 +141,19 @@ contract VirtualTradingEnvironment is IVirtualTradingEnvironment {
         emit SetDataFeed(_dataFeed);
     }
 
+    /**
+    * @notice Updates the name of this VTE.
+    * @dev This function can only be called once by the VirtualTradingEnvironmentRegistry contract.
+    * @param _newName The new name for this VTE.
+    */
+    function updateName(string memory _newName) external override onlyVTERegistry {
+        string memory oldName = name;
+
+        name = _newName;
+
+        emit UpdatedName(oldName, _newName);
+    }
+
     /* ========== MODIFIERS ========== */
 
     modifier onlyOwner() {
@@ -155,4 +170,5 @@ contract VirtualTradingEnvironment is IVirtualTradingEnvironment {
 
     event SetDataFeed(address newDataFeed);
     event PlacedOrder(string asset, bool isBuy, uint256 assetPrice, uint256 leverageFactor);
+    event UpdatedName(string oldName, string newName);
 }
