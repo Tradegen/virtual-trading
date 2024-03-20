@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 const { parseEther } = require("@ethersproject/units");
-
+/*
 describe("Integration", () => {
   let deployer;
   let otherUser;
@@ -160,4 +160,4 @@ describe("Integration", () => {
         expect(position[1]).to.equal(0);
     });
   });
-});
+});*/

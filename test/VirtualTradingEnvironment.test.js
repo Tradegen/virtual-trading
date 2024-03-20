@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 const { parseEther } = require("@ethersproject/units");
-/*
+
 describe("VirtualTradingEnvironment", () => {
   let deployer;
   let otherUser;
@@ -83,7 +83,7 @@ describe("VirtualTradingEnvironment", () => {
     let tx = await factory.initializeContract(registryAddress);
     await tx.wait();
 
-    let tx2 = await registry.createVirtualTradingEnvironment(parseEther("100"));
+    let tx2 = await registry.createVirtualTradingEnvironment(parseEther("100"), "Test VTE");
     let temp = await tx2.wait();
     let event = temp.events[temp.events.length - 1];
     VTEAddress = event.args.contractAddress;
@@ -94,6 +94,25 @@ describe("VirtualTradingEnvironment", () => {
 
     let tx4 = await registry.setDataFeed(1, dataFeedAddress);
     await tx4.wait();
+  });
+
+  describe("#initialisation", () => {
+    it("correctly initialised", async () => {
+        let VTEDataFeedAddress = await VTE.dataFeed();
+        expect(VTEDataFeedAddress).to.equal(dataFeedAddress);
+
+        let VTEOracleAddress = await VTE.oracle();
+        expect(VTEOracleAddress).to.equal(oracleAddress);
+
+        let VTERegistryAddress = await VTE.registry();
+        expect(VTERegistryAddress).to.equal(registryAddress);
+
+        let VTEOwner = await VTE.VTEOwner();
+        expect(VTEOwner).to.equal(deployer.address);
+
+        let name = await VTE.name();
+        expect(name).to.equal("Test VTE");
+    });
   });
 
   describe("#placeOrder", () => {
@@ -361,4 +380,52 @@ describe("VirtualTradingEnvironment", () => {
         expect(position[1]).to.equal(0);
     });
   });
-});*/
+
+  describe("#setDataFeed", () => {
+    it("onlyVTERegistry", async () => {
+        let tx = VTE.setDataFeed(deployer.address);
+        await expect(tx).to.be.reverted;
+    });
+
+    it("meets requirements", async () => {
+        let newVTE = await VTEFactory.deploy(deployer.address, oracleAddress, deployer.address, "Test VTE");
+        await newVTE.deployed();
+
+        let tx = await newVTE.setDataFeed(dataFeedAddress);
+        await tx.wait();
+
+        let VTEDataFeedAddress = await newVTE.dataFeed();
+        expect(VTEDataFeedAddress).to.equal(dataFeedAddress);
+
+        let tx2 = await newVTE.setDataFeed(deployer.address);
+        await tx2.wait();
+
+        VTEDataFeedAddress = await newVTE.dataFeed();
+        expect(VTEDataFeedAddress).to.equal(deployer.address);
+    });
+  });
+
+  describe("#updateName", () => {
+    it("onlyVTERegistry", async () => {
+        let tx = VTE.updateName("New VTE");
+        await expect(tx).to.be.reverted;
+
+        let name = await VTE.name();
+        expect(name).to.equal("Test VTE");
+    });
+
+    it("meets requirements", async () => {
+        let newVTE = await VTEFactory.deploy(deployer.address, oracleAddress, deployer.address, "Test VTE");
+        await newVTE.deployed();
+
+        let name = await newVTE.name();
+        expect(name).to.equal("Test VTE");
+
+        let tx = await newVTE.updateName("New VTE");
+        await tx.wait();
+
+        name = await newVTE.name();
+        expect(name).to.equal("New VTE");
+    });
+  });
+});

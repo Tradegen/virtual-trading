@@ -25,7 +25,7 @@ module.exports = {
     path: "./build/abi",
     flat: true,
   },
-  defaultNetwork: "alfajores",
+  defaultNetwork: "hardhat",
   gasReporter: {
     enabled: process.env.REPORT_GAS ? true : false,
     currency: "USD"
@@ -36,7 +36,7 @@ module.exports = {
       accounts: [process.env.PRIVATE_KEY1],
       chainId: ICeloNetwork.MAINNET,
       live: true,
-      gasPrice: 2 * 10 ** 8,
+      gasPrice: 2 * 10 ** 10,
       gas: 8000000,
     },
     alfajores: {
@@ -44,7 +44,7 @@ module.exports = {
       accounts: [process.env.PRIVATE_KEY1, process.env.PRIVATE_KEY2, process.env.PRIVATE_KEY3],
       chainId: ICeloNetwork.ALFAJORES,
       live: true,
-      gasPrice: 2 * 10 ** 8,
+      gasPrice: 2 * 10 ** 10,
       gas: 8000000,
     },
     hardhat: {
