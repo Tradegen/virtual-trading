@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 const { parseEther } = require("@ethersproject/units");
-/*
+
 describe("VirtualTradingEnvironmentFactory", () => {
   let deployer;
   let otherUser;
@@ -76,7 +76,7 @@ describe("VirtualTradingEnvironmentFactory", () => {
         let tx = await factory.initializeContract(deployer.address);
         await tx.wait();
 
-        let tx2 = factory.connect(otherUser).createVirtualTradingEnvironment(otherUser.address);
+        let tx2 = factory.connect(otherUser).createVirtualTradingEnvironment(otherUser.address, "Test VTE");
         await expect(tx2).to.be.reverted;
     });
 
@@ -84,7 +84,7 @@ describe("VirtualTradingEnvironmentFactory", () => {
         let tx = await factory.initializeContract(deployer.address);
         await tx.wait();
 
-        let tx2 = await factory.createVirtualTradingEnvironment(otherUser.address);
+        let tx2 = await factory.createVirtualTradingEnvironment(otherUser.address, "Test VTE");
         let temp = await tx2.wait();
         let event = temp.events[temp.events.length - 1];
         VTEAddress = event.args.VTE;
@@ -98,6 +98,9 @@ describe("VirtualTradingEnvironmentFactory", () => {
 
         let registry = await VTE.registry();
         expect(registry).to.equal(deployer.address);
+
+        let name = await VTE.name();
+        expect(name).to.equal("Test VTE");
     });
   });
-});*/
+});
