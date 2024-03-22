@@ -24,6 +24,12 @@
         "internalType": "address",
         "name": "VTE",
         "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
       }
     ],
     "name": "CreatedVirtualTradingEnvironment",
@@ -126,6 +132,11 @@
         "internalType": "address",
         "name": "_owner",
         "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
       }
     ],
     "name": "createVirtualTradingEnvironment",
