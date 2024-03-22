@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 const { parseEther } = require("@ethersproject/units");
-/*
+
 describe("Integration", () => {
   let deployer;
   let otherUser;
@@ -110,7 +110,7 @@ describe("Integration", () => {
     let tx = await factory.initializeContract(registryAddress);
     await tx.wait();
 
-    let tx2 = await registry.createVirtualTradingEnvironment(parseEther("100"));
+    let tx2 = await registry.createVirtualTradingEnvironment(parseEther("100"), "Test VTE");
     let temp = await tx2.wait();
     let event = temp.events[temp.events.length - 1];
     VTEAddress = event.args.contractAddress;
@@ -160,4 +160,4 @@ describe("Integration", () => {
         expect(position[1]).to.equal(0);
     });
   });
-});*/
+});
