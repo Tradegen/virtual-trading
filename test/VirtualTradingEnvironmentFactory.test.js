@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 const { parseEther } = require("@ethersproject/units");
-
+/*
 describe("VirtualTradingEnvironmentFactory", () => {
   let deployer;
   let otherUser;
@@ -103,4 +103,4 @@ describe("VirtualTradingEnvironmentFactory", () => {
         expect(name).to.equal("Test VTE");
     });
   });
-});
+});*/

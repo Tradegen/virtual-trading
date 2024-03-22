@@ -72,12 +72,12 @@ contract VirtualTradingEnvironmentRegistry is IVirtualTradingEnvironmentRegistry
     * @return address Address of the VTE's data feed.
     */
     function getVTEDataFeed(uint256 _index, address _VTE) external view override returns (address) {
-        if (_index == 0) {
-            return IVirtualTradingEnvironment(_VTE).dataFeed();
+        if (_index != 0) {
+            return IVirtualTradingEnvironment(virtualTradingEnvironments[_index]).dataFeed();
         }
 
-        if (_VTE == address(0)) {
-            return IVirtualTradingEnvironment(virtualTradingEnvironments[_index]).dataFeed();
+        if (_VTE != address(0)) {
+            return IVirtualTradingEnvironment(_VTE).dataFeed();
         }
 
         return address(0);
@@ -95,12 +95,12 @@ contract VirtualTradingEnvironmentRegistry is IVirtualTradingEnvironmentRegistry
     * @return address Address of the VTE's owner.
     */
     function getOwner(uint256 _index, address _VTE) external view override returns (address) {
-        if (_index == 0) {
-            return IVirtualTradingEnvironment(_VTE).VTEOwner();
+        if (_index != 0) {
+            return IVirtualTradingEnvironment(virtualTradingEnvironments[_index]).VTEOwner();
         }
 
-        if (_VTE == address(0)) {
-            return IVirtualTradingEnvironment(virtualTradingEnvironments[_index]).VTEOwner();
+        if (_VTE != address(0)) {
+            return IVirtualTradingEnvironment(_VTE).VTEOwner();
         }
 
         return address(0);
@@ -118,12 +118,12 @@ contract VirtualTradingEnvironmentRegistry is IVirtualTradingEnvironmentRegistry
     * @return string Name of the VTE.
     */
     function getVTEName(uint256 _index, address _VTE) external view override returns (string memory) {
-        if (_index == 0) {
-            return IVirtualTradingEnvironment(_VTE).name();
+        if (_index != 0) {
+            return IVirtualTradingEnvironment(virtualTradingEnvironments[_index]).name();
         }
 
-        if (_VTE == address(0)) {
-            return IVirtualTradingEnvironment(virtualTradingEnvironments[_index]).name();
+        if (_VTE != address(0)) {
+            return IVirtualTradingEnvironment(_VTE).name();
         }
 
         return "";
@@ -156,7 +156,7 @@ contract VirtualTradingEnvironmentRegistry is IVirtualTradingEnvironmentRegistry
         virtualTradingEnvironments[index] = VTE;
         VTEAddresses[VTE] = index;
 
-        emit CreatedVTE(index, VTE, msg.sender, _name);
+        emit CreatedVTE(index, VTE, msg.sender, _name, dataFeed);
     }
 
     /**
@@ -280,12 +280,10 @@ contract VirtualTradingEnvironmentRegistry is IVirtualTradingEnvironmentRegistry
      * @dev This function can only be called by the operator.
      * @param _newMinimumTime The new minimum time between name updates.
      */
-    function increaseMinimumTimeBetweenNameUpdates(uint256 _newMinimumTime) external onlyOperator {
-        require(_newMinimumTime > MINIMUM_TIME_BETWEEN_NAME_UPDATES, "VirtualTradingEnvironmentRegistry: New minimum time must be higher.");
-
+    function updateMinimumTimeBetweenNameUpdates(uint256 _newMinimumTime) external onlyOperator {
         MINIMUM_TIME_BETWEEN_NAME_UPDATES = _newMinimumTime;
 
-        emit IncreasedMinimumTimeBetweenNameUpdates(_newMinimumTime);
+        emit UpdatedMinimumTimeBetweenNameUpdates(_newMinimumTime);
     }
 
     /* ========== MODIFIERS ========== */
@@ -313,9 +311,9 @@ contract VirtualTradingEnvironmentRegistry is IVirtualTradingEnvironmentRegistry
     event IncreasedMaxVTEsPerUser(uint256 newLimit);
     event UpdatedCreationFee(uint256 newFee);
     event UpdatedMaxUsageFee(uint256 newFee);
-    event CreatedVTE(uint256 index, address contractAddress, address owner, string name);
+    event CreatedVTE(uint256 index, address contractAddress, address owner, string name, address dataFeed);
     event UpdatedVTEName(address VTE, string oldName, string newName);
     event IncreasedMaximumNumberOfPositions(uint256 newLimit);
     event IncreasedMaximumLeverageFactor(uint256 newLimit);
-    event IncreasedMinimumTimeBetweenNameUpdates(uint256 newMinimumTime);
+    event UpdatedMinimumTimeBetweenNameUpdates(uint256 newMinimumTime);
 }
