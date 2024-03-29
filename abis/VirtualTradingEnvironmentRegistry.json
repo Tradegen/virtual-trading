@@ -165,19 +165,6 @@
         "type": "uint256"
       }
     ],
-    "name": "UpdatedCreationFee",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "newFee",
-        "type": "uint256"
-      }
-    ],
     "name": "UpdatedMaxUsageFee",
     "type": "event"
   },

@@ -42,7 +42,6 @@ contract VirtualTradingEnvironmentFactory is IVirtualTradingEnvironmentFactory, 
     * @notice Sets the address of the VirtualTradingEnvironmentRegistry contract.
     * @dev The address is initialized outside of the constructor to avoid a circular dependency with VirtualTradingEnvironmentRegistry.
     * @dev This function can only be called by the VirtualTradingEnvironmentFactory owner.
-    * @dev This function can only be called once.
     * @param _registry Address of the VirtualTradingEnvironmentRegistry contract.
     */
     function initializeContract(address _registry) external onlyOwner {

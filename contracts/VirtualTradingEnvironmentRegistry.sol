@@ -309,7 +309,6 @@ contract VirtualTradingEnvironmentRegistry is IVirtualTradingEnvironmentRegistry
     event SetRegistrar(address newRegistrar);
     event SetDataFeed(uint256 index, address dataFeed);
     event IncreasedMaxVTEsPerUser(uint256 newLimit);
-    event UpdatedCreationFee(uint256 newFee);
     event UpdatedMaxUsageFee(uint256 newFee);
     event CreatedVTE(uint256 index, address contractAddress, address owner, string name, address dataFeed);
     event UpdatedVTEName(address VTE, string oldName, string newName);
