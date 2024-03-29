@@ -194,11 +194,14 @@ contract VirtualTradingEnvironmentRegistry is IVirtualTradingEnvironmentRegistry
     */
     function setDataFeed(uint256 _index, address _dataFeed) external override onlyOwner {
         require(_index > 0 && _index <= numberOfVTEs, "VirtualTradingEnvironmentRegistry: Index out of bounds.");
-        require(virtualTradingEnvironments[_index] == IVTEDataFeed(_dataFeed).dataProvider(), "VirtualTradingEnvironmentRegistry: VTE is not the data provider for this data feed.");
 
-        IVirtualTradingEnvironment(virtualTradingEnvironments[_index]).setDataFeed(_dataFeed);
+        address VTE = virtualTradingEnvironments[_index];
 
-        emit SetDataFeed(_index, _dataFeed);
+        require(VTE == IVTEDataFeed(_dataFeed).dataProvider(), "VirtualTradingEnvironmentRegistry: VTE is not the data provider for this data feed.");
+        
+        IVirtualTradingEnvironment(VTE).setDataFeed(_dataFeed);
+
+        emit SetDataFeed(_index, VTE, _dataFeed);
     }
 
     /**
@@ -307,7 +310,7 @@ contract VirtualTradingEnvironmentRegistry is IVirtualTradingEnvironmentRegistry
 
     event SetOperator(address newOperator);
     event SetRegistrar(address newRegistrar);
-    event SetDataFeed(uint256 index, address dataFeed);
+    event SetDataFeed(uint256 index, address VTE, address dataFeed);
     event IncreasedMaxVTEsPerUser(uint256 newLimit);
     event UpdatedMaxUsageFee(uint256 newFee);
     event CreatedVTE(uint256 index, address contractAddress, address owner, string name, address dataFeed);
